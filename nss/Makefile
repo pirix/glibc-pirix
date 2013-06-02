@@ -33,8 +33,8 @@ routines		= nsswitch getnssent getnssent_r digits_dots \
 databases		= proto service hosts network grp pwd rpc ethers \
 			  spwd netgrp key alias sgrp
 
-others                  := getent makedb
-install-bin             := getent makedb
+others                  :=
+install-bin             :=
 makedb-modules = xmalloc hash-string
 extra-objs		+= $(makedb-modules:=.o)
 

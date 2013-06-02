@@ -33,6 +33,8 @@ sparc.*-.*-.*		ABI			sparc-@OS@
 # Configuration		Library=version		Earliest symbol set (optional)
 # -------------		---------------		------------------------------
 
+.*-.*-pirix.*		libc=1
+
 # The interface to -lm depends mostly only on cpu, not on operating system.
 sparc64.*-.*-linux.*	libm=6			GLIBC_2.2
 sh.*-.*-linux.*		libm=6			GLIBC_2.2

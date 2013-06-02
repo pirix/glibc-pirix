@@ -1,3 +1,11 @@
+GNU C Library Pirix Port
+
+Configure with:
+
+./configure --host=i386-elf-pirix --disable-shared --disable-nls
+--with-__thread --with-headers=/path/to/pirix/include/
+
+---
 This directory contains the sources of the GNU C Library.
 See the file "version.h" for what release version you have.
 
