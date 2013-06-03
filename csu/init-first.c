@@ -94,7 +94,7 @@ _init (int argc, char **argv, char **envp)
 #endif
 
   /* Initialize ctype data.  */
-  __ctype_init ();
+  //__ctype_init ();
 
 #if defined SHARED && !defined NO_CTORS_DTORS_SECTIONS
   __libc_global_ctors ();
