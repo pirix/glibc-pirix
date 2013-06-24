@@ -65,9 +65,9 @@
 /*
  * Install new dtv for current thread.
  */
-#define INSTALL_NEW_DTV(dtvp) ({                        \
-    struct pthread* __pd;                               \
-    THREAD_SETMEM(__pd, header.dtv, (dtvp));            \
+#define INSTALL_NEW_DTV(dtvp) ({                \
+    struct pthread* __pd;                       \
+    THREAD_SETMEM(__pd, header.dtv, (dtvp));    \
 })
 
 /*
@@ -133,12 +133,48 @@
 
 #define STACK_ALIGN 16
 
+#define THREAD_SELF_SYSINFO THREAD_GETMEM(THREAD_SELF, header.sysinfo)
+#define THREAD_SYSINFO(pd) ((pd)->header.sysinfo)
+
+#if defined NEED_DL_SYSINFO
+#define INIT_SYSINFO _head->sysinfo = GLRO(dl_sysinfo)
+#else
+#define INIT_SYSINFO
+#endif
+
+#define THREAD_SET_STACK_GUARD(value)                       \
+    THREAD_SETMEM(THREAD_SELF, header.stack_guard, value)
+
+#define THREAD_COPY_STACK_GUARD(descr)                      \
+    ((descr)->header.stack_guard                            \
+     = THREAD_GETMEM(THREAD_SELF, header.stack_guard))
+
+#define THREAD_SET_POINTER_GUARD(value)                     \
+    THREAD_SETMEM(THREAD_SELF, header.pointer_guard, value)
+
+#define THREAD_COPY_POINTER_GUARD(descr)                    \
+    ((descr)->header.pointer_guard                          \
+     = THREAD_GETMEM(THREAD_SELF, header.pointer_guard))
+
 #define THREAD_GSCOPE_FLAG_UNUSED 0
 #define THREAD_GSCOPE_FLAG_USED   1
 #define THREAD_GSCOPE_FLAG_WAIT   2
-#define THREAD_GSCOPE_RESET_FLAG() (0)
-#define THREAD_GSCOPE_SET_FLAG() (0)
-#define THREAD_GSCOPE_WAIT() (0)
+#define THREAD_GSCOPE_RESET_FLAG()                                            \
+  do {                                                                        \
+      int __res;                                                              \
+      asm volatile ("xchgl %0, %%gs:%P1"                                      \
+                    : "=r" (__res)                                            \
+                    : "i" THREAD_OFFSET(header.gscope_flag),                  \
+                      "0" (THREAD_GSCOPE_FLAG_UNUSED));                       \
+      if (__res == THREAD_GSCOPE_FLAG_WAIT)                                   \
+          abort();                                                            \
+    }                                                                         \
+  while (0)
+
+#define THREAD_GSCOPE_SET_FLAG() \
+  THREAD_SETMEM(THREAD_SELF, header.gscope_flag, THREAD_GSCOPE_FLAG_USED)
+
+#define THREAD_GSCOPE_WAIT() GL(dl_wait_lookup_done) ()
 
 #endif /* !ASSEMBLER */
 

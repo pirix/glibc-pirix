@@ -3,6 +3,7 @@
 
 #include <stddef.h>
 #include <stdbool.h>
+#include <stdint.h>
 
 typedef union dtv {
     size_t counter;
@@ -16,6 +17,11 @@ typedef struct {
     void* tcb;
     dtv_t* dtv;
     void* self;
+    int multiple_threads;
+    uintptr_t sysinfo;
+    uintptr_t stack_guard;
+    uintptr_t pointer_guard;
+    int gscope_flag;
 } tcbhead_t;
 
 typedef struct pthread {
@@ -26,5 +32,6 @@ typedef struct pthread {
 #define TLS_INIT_TCB_ALIGN __alignof__(struct pthread)
 #define TLS_TCB_SIZE TLS_INIT_TCB_SIZE
 #define TLS_TCB_ALIGN TLS_INIT_TCB_ALIGN
+#define TLS_MULTIPLE_THREADS_IN_TCB 1
 
 #endif /* tls.h */
